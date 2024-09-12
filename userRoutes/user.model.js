@@ -24,6 +24,11 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  isDeleted: {  
+    type: Boolean,
+    default: false, 
+  },
+  
   // tokens: [{ 
   //   token: {
   //     type: String,
@@ -54,6 +59,9 @@ userSchema.methods.comparePassword = async function(candidatePassword) {
   }
 };
 
+
+
+
 // Generate authentication token
 userSchema.methods.generateAuthToken = async function() {
   try {
@@ -72,6 +80,11 @@ userSchema.methods.generateAuthToken = async function() {
     throw err;
   }
 };
+
+// userSchema.pre('findById', function(next) {
+//   this.where({ isDeleted: false });
+//   next();
+// });
 
 const User = mongoose.model('User', userSchema);
 module.exports = User;

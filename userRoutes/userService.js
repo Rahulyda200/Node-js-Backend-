@@ -1,16 +1,15 @@
-const User = require('../userRoutes/user.model');
-const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken');
-const mongoose=require('mongoose')
+const User = require("../userRoutes/user.model");
+const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
+const mongoose = require("mongoose");
 
 // Register a new user
 const registerUser = async (userData) => {
   const { name, email, phone, address, password } = userData;
 
-  // Check if email already exists
   const existingUser = await User.findOne({ email });
   if (existingUser) {
-    throw new Error('Email already exists');
+    throw new Error("Email already exists");
   }
 
   // Create new user
@@ -25,16 +24,15 @@ const registerUser = async (userData) => {
 
 // Login a user
 const loginUser = async (email, password) => {
-  // Find user by email
   const user = await User.findOne({ email });
   if (!user) {
-    throw new Error('Invalid Credentials');
+    throw new Error("Invalid Credentials");
   }
 
   // Compare password
   const isMatch = await user.comparePassword(password);
   if (!isMatch) {
-    throw new Error('Invalid Credentials');
+    throw new Error("Invalid Credentials");
   }
 
   // Generate auth token
@@ -51,12 +49,12 @@ const getAllUsers = async () => {
 // Find a user by ID
 const getUserById = async (userId) => {
   if (!mongoose.Types.ObjectId.isValid(userId)) {
-    throw new Error('Invalid ID format');
+    throw new Error("Invalid ID format");
   }
 
   const user = await User.findById(userId);
   if (!user) {
-    throw new Error('User not found');
+    throw new Error("User not found");
   }
 
   return user;
@@ -65,7 +63,7 @@ const getUserById = async (userId) => {
 // Update a user by ID
 const updateUserById = async (userId, updateData) => {
   if (!mongoose.Types.ObjectId.isValid(userId)) {
-    throw new Error('Invalid ID format');
+    throw new Error("Invalid ID format");
   }
 
   // Handle password hashing if a new password is provided
@@ -79,24 +77,32 @@ const updateUserById = async (userId, updateData) => {
   });
 
   if (!updatedUser) {
-    throw new Error('User not found');
+    throw new Error("User not found");
   }
 
   return updatedUser;
 };
 
 // Delete a user by ID
-const deleteUserById = async (userId) => {
+const softDeleteUserById = async (userId) => {
   if (!mongoose.Types.ObjectId.isValid(userId)) {
-    throw new Error('Invalid ID format');
+    throw new Error("Invalid ID format");
   }
 
-  const deletedUser = await User.findByIdAndDelete(userId);
-  if (!deletedUser) {
-    throw new Error('User not found');
+  const user = await User.findById(userId);
+
+  if (!user) {
+    throw new Error("User not found");
   }
 
-  return deletedUser;
+  if (user.isDeleted) {
+    throw new Error("User is already soft deleted");
+  }
+
+  user.isDeleted = true;
+  await user.save();
+
+  return user;
 };
 
 module.exports = {
@@ -105,5 +111,5 @@ module.exports = {
   getAllUsers,
   getUserById,
   updateUserById,
-  deleteUserById,
+  softDeleteUserById,
 };
