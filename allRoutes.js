@@ -6,3 +6,6 @@ const allRoutes = express.Router();
 allRoutes.use("/user", userRouter);
 
 module.exports = allRoutes;
+
+
+/// trhis is for conflictttt 
