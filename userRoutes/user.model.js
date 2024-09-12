@@ -54,6 +54,9 @@ userSchema.methods.comparePassword = async function(candidatePassword) {
   }
 };
 
+
+
+
 // Generate authentication token
 userSchema.methods.generateAuthToken = async function() {
   try {

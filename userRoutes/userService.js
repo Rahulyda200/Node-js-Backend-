@@ -7,7 +7,7 @@ const mongoose=require('mongoose')
 const registerUser = async (userData) => {
   const { name, email, phone, address, password } = userData;
 
-  // Check if email already exists
+ 
   const existingUser = await User.findOne({ email });
   if (existingUser) {
     throw new Error('Email already exists');
@@ -25,7 +25,7 @@ const registerUser = async (userData) => {
 
 // Login a user
 const loginUser = async (email, password) => {
-  // Find user by email
+  
   const user = await User.findOne({ email });
   if (!user) {
     throw new Error('Invalid Credentials');
