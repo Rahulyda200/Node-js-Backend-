@@ -1,3 +1,4 @@
+'use strict'; 
 const userService = require("./userService");
 
 // Register User
@@ -62,17 +63,21 @@ exports.getAllUsers = async (req, res) => {
   }
 };
 
-// Get User by ID
+// Get User by ID and populate profiles
 exports.getUserById = async (req, res) => {
   try {
     const userId = req.params.id;
-    const user = await userService.getUserById(userId);
+    const user = await User.findById(userId).populate('profiles'); 
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
     res.status(200).json(user);
   } catch (error) {
-    console.error("Error finding user:", error);
+    console.error('Error finding user:', error);
     res.status(500).json({ message: `Error finding user: ${error.message}` });
   }
 };
+
 
 // Update User by ID
 exports.updateUserById = async (req, res) => {

@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const { required } = require('joi');
 
 const userSchema = new mongoose.Schema({
   name: {
@@ -28,6 +29,11 @@ const userSchema = new mongoose.Schema({
     type: Boolean,
     default: false, 
   },
+  profiles: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Profile' ,
+    required:true,
+  }],
   
   // tokens: [{ 
   //   token: {
